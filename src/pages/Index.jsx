@@ -7,8 +7,9 @@ import FundamentalAnalysis from "@/components/FundamentalAnalysis";
 import CryptoExchange from "@/components/CryptoExchange";
 import GoldSilverPrices from "@/components/GoldSilverPrices";
 import CurrencyConversion from "@/components/CurrencyConversion";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "react-tabs/style/react-tabs.css";
+import CountdownTimer from "@/components/CountdownTimer";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -163,36 +164,42 @@ const Index = () => {
       <Button onClick={handleSellAtPeak} variant="outline">
         Sell at Peak Ratio
       </Button>
-      <div className="w-3/4 mt-4">
-        <h2 className="text-2xl text-center">Top 5 Stocks with Biggest Margin Jumps</h2>
-        <Bar data={stockDataForBarChart} options={options} />
-      </div>
-      <div className="w-3/4 mt-4">
-        <Tabs>
-          <TabList>
-            <Tab>Wallet</Tab>
-            <Tab>Fundamental Analysis</Tab>
-            <Tab>Cryptocurrency Exchange</Tab>
-            <Tab>Gold & Silver Prices</Tab>
-            <Tab>Currency Conversion</Tab>
-          </TabList>
-          <TabPanel>
-            <Wallet />
-          </TabPanel>
-          <TabPanel>
-            <FundamentalAnalysis />
-          </TabPanel>
-          <TabPanel>
-            <CryptoExchange />
-          </TabPanel>
-          <TabPanel>
-            <GoldSilverPrices />
-          </TabPanel>
-          <TabPanel>
-            <CurrencyConversion />
-          </TabPanel>
-        </Tabs>
-      </div>
+      <Tabs defaultValue="live-prediction-stock">
+        <TabsList>
+          <TabsTrigger value="live-prediction-stock">Live Prediction Stock</TabsTrigger>
+          <TabsTrigger value="top-5-stocks">Top 5 Stocks</TabsTrigger>
+          <TabsTrigger value="next-automated-picks">Next Automated Picks</TabsTrigger>
+          <TabsTrigger value="crypto-currency">Crypto & Currency</TabsTrigger>
+        </TabsList>
+        <TabsContent value="live-prediction-stock">
+          <div className="w-3/4">
+            <Line data={stockDataForLineChart} options={options} />
+          </div>
+        </TabsContent>
+        <TabsContent value="top-5-stocks">
+          <div className="w-3/4 mt-4">
+            <h2 className="text-2xl text-center">Top 5 Stocks with Biggest Margin Jumps</h2>
+            <Bar data={stockDataForBarChart} options={options} />
+          </div>
+        </TabsContent>
+        <TabsContent value="next-automated-picks">
+          <CountdownTimer />
+        </TabsContent>
+        <TabsContent value="crypto-currency">
+          <Tabs defaultValue="crypto-exchange">
+            <TabsList>
+              <TabsTrigger value="crypto-exchange">Cryptocurrency Exchange</TabsTrigger>
+              <TabsTrigger value="currency-conversion">Currency Conversion</TabsTrigger>
+            </TabsList>
+            <TabsContent value="crypto-exchange">
+              <CryptoExchange />
+            </TabsContent>
+            <TabsContent value="currency-conversion">
+              <CurrencyConversion />
+            </TabsContent>
+          </Tabs>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
