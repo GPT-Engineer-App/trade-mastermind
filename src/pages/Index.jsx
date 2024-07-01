@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
+import Wallet from "@/components/Wallet";
+import FundamentalAnalysis from "@/components/FundamentalAnalysis";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -111,6 +115,20 @@ const Index = () => {
             </li>
           ))}
         </ul>
+      </div>
+      <div className="w-3/4 mt-4">
+        <Tabs>
+          <TabList>
+            <Tab>Wallet</Tab>
+            <Tab>Fundamental Analysis</Tab>
+          </TabList>
+          <TabPanel>
+            <Wallet />
+          </TabPanel>
+          <TabPanel>
+            <FundamentalAnalysis />
+          </TabPanel>
+        </Tabs>
       </div>
     </div>
   );
