@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
+import { Line, Bar } from "react-chartjs-2";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import Wallet from "@/components/Wallet";
 import FundamentalAnalysis from "@/components/FundamentalAnalysis";
+import CryptoExchange from "@/components/CryptoExchange";
+import GoldSilverPrices from "@/components/GoldSilverPrices";
+import CurrencyConversion from "@/components/CurrencyConversion";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
 import {
@@ -12,6 +15,7 @@ import {
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
@@ -22,6 +26,7 @@ ChartJS.register(
   LinearScale,
   PointElement,
   LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend
@@ -32,6 +37,9 @@ const Index = () => {
   const [labels, setLabels] = useState([]);
   const [sellAtPeak, setSellAtPeak] = useState(false);
   const [topStocks, setTopStocks] = useState([]);
+  const [cryptoData, setCryptoData] = useState([]);
+  const [goldSilverData, setGoldSilverData] = useState([]);
+  const [currencyData, setCurrencyData] = useState([]);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -48,8 +56,44 @@ const Index = () => {
       }
     };
 
+    const fetchCryptoData = async () => {
+      try {
+        const response = await axios.get("https://api.example.com/crypto-data");
+        setCryptoData(response.data);
+      } catch (error) {
+        console.error("Error fetching crypto data:", error);
+      }
+    };
+
+    const fetchGoldSilverData = async () => {
+      try {
+        const response = await axios.get("https://api.example.com/gold-silver-data");
+        setGoldSilverData(response.data);
+      } catch (error) {
+        console.error("Error fetching gold and silver data:", error);
+      }
+    };
+
+    const fetchCurrencyData = async () => {
+      try {
+        const response = await axios.get("https://api.example.com/currency-data");
+        setCurrencyData(response.data);
+      } catch (error) {
+        console.error("Error fetching currency data:", error);
+      }
+    };
+
     fetchStockData();
-    const interval = setInterval(fetchStockData, 60000); // Fetch data every minute
+    fetchCryptoData();
+    fetchGoldSilverData();
+    fetchCurrencyData();
+
+    const interval = setInterval(() => {
+      fetchStockData();
+      fetchCryptoData();
+      fetchGoldSilverData();
+      fetchCurrencyData();
+    }, 60000); // Fetch data every minute
 
     return () => clearInterval(interval);
   }, []);
@@ -71,7 +115,7 @@ const Index = () => {
     console.log("Selling stocks at peak ratio...");
   };
 
-  const data = {
+  const stockDataForLineChart = {
     labels: labels,
     datasets: [
       {
@@ -80,6 +124,19 @@ const Index = () => {
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         fill: true,
+      },
+    ],
+  };
+
+  const stockDataForBarChart = {
+    labels: topStocks.map(stock => stock.name),
+    datasets: [
+      {
+        label: "Margin Jump",
+        data: topStocks.map(stock => stock.marginJump),
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 1,
       },
     ],
   };
@@ -101,32 +158,38 @@ const Index = () => {
     <div className="h-screen w-screen flex flex-col items-center justify-center space-y-4">
       <h1 className="text-3xl text-center">Live Predictive Stock Graph</h1>
       <div className="w-3/4">
-        <Line data={data} options={options} />
+        <Line data={stockDataForLineChart} options={options} />
       </div>
       <Button onClick={handleSellAtPeak} variant="outline">
         Sell at Peak Ratio
       </Button>
       <div className="w-3/4 mt-4">
         <h2 className="text-2xl text-center">Top 5 Stocks with Biggest Margin Jumps</h2>
-        <ul className="list-disc list-inside">
-          {topStocks.map((stock, index) => (
-            <li key={index}>
-              {stock.name}: {stock.marginJump}
-            </li>
-          ))}
-        </ul>
+        <Bar data={stockDataForBarChart} options={options} />
       </div>
       <div className="w-3/4 mt-4">
         <Tabs>
           <TabList>
             <Tab>Wallet</Tab>
             <Tab>Fundamental Analysis</Tab>
+            <Tab>Cryptocurrency Exchange</Tab>
+            <Tab>Gold & Silver Prices</Tab>
+            <Tab>Currency Conversion</Tab>
           </TabList>
           <TabPanel>
             <Wallet />
           </TabPanel>
           <TabPanel>
             <FundamentalAnalysis />
+          </TabPanel>
+          <TabPanel>
+            <CryptoExchange />
+          </TabPanel>
+          <TabPanel>
+            <GoldSilverPrices />
+          </TabPanel>
+          <TabPanel>
+            <CurrencyConversion />
           </TabPanel>
         </Tabs>
       </div>
