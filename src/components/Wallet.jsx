@@ -1,17 +1,22 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
 
 const Wallet = () => {
-  const [balance, setBalance] = useState(1000); // Example balance
+  const [balance, setBalance] = useState({ checking: 1000, savings: 5000 }); // Example balances
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [currency, setCurrency] = useState("USD");
+  const [activeTab, setActiveTab] = useState("checking");
 
   const handleWithdraw = () => {
-    if (withdrawAmount > 0 && withdrawAmount <= balance) {
-      setBalance(balance - withdrawAmount);
+    if (withdrawAmount > 0 && withdrawAmount <= balance[activeTab]) {
+      setBalance({
+        ...balance,
+        [activeTab]: balance[activeTab] - withdrawAmount,
+      });
       setWithdrawAmount("");
     } else {
       alert("Invalid withdraw amount");
@@ -31,7 +36,18 @@ const Wallet = () => {
   return (
     <div className="wallet">
       <h2 className="text-2xl mb-4">Wallet</h2>
-      <p className="mb-2">Balance: ${balance}</p>
+      <Tabs defaultValue="checking" onValueChange={(value) => setActiveTab(value)}>
+        <TabsList>
+          <TabsTrigger value="checking">Checking Account</TabsTrigger>
+          <TabsTrigger value="savings">Savings Account</TabsTrigger>
+        </TabsList>
+        <TabsContent value="checking">
+          <p className="mb-2">Checking Balance: ${balance.checking}</p>
+        </TabsContent>
+        <TabsContent value="savings">
+          <p className="mb-2">Savings Balance: ${balance.savings}</p>
+        </TabsContent>
+      </Tabs>
       <Input
         type="number"
         value={withdrawAmount}
