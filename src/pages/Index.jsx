@@ -27,6 +27,7 @@ const Index = () => {
   const [stockData, setStockData] = useState([]);
   const [labels, setLabels] = useState([]);
   const [sellAtPeak, setSellAtPeak] = useState(false);
+  const [topStocks, setTopStocks] = useState([]);
 
   useEffect(() => {
     const fetchStockData = async () => {
@@ -37,6 +38,7 @@ const Index = () => {
         const times = data.map((item) => item.time);
         setStockData(prices);
         setLabels(times);
+        calculateTopStocks(data);
       } catch (error) {
         console.error("Error fetching stock data:", error);
       }
@@ -47,6 +49,17 @@ const Index = () => {
 
     return () => clearInterval(interval);
   }, []);
+
+  const calculateTopStocks = (data) => {
+    const marginJumps = data.map((item, index) => {
+      if (index === 0) return { ...item, marginJump: 0 };
+      return { ...item, marginJump: item.price - data[index - 1].price };
+    });
+
+    const sortedStocks = marginJumps.sort((a, b) => b.marginJump - a.marginJump);
+    const top5Stocks = sortedStocks.slice(0, 5);
+    setTopStocks(top5Stocks);
+  };
 
   const handleSellAtPeak = () => {
     setSellAtPeak(true);
@@ -89,6 +102,16 @@ const Index = () => {
       <Button onClick={handleSellAtPeak} variant="outline">
         Sell at Peak Ratio
       </Button>
+      <div className="w-3/4 mt-4">
+        <h2 className="text-2xl text-center">Top 5 Stocks with Biggest Margin Jumps</h2>
+        <ul className="list-disc list-inside">
+          {topStocks.map((stock, index) => (
+            <li key={index}>
+              {stock.name}: {stock.marginJump}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
