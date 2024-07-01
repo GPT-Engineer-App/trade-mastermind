@@ -7,6 +7,7 @@ import axios from "axios";
 const Wallet = () => {
   const [balance, setBalance] = useState({ checking: 1000, savings: 5000 }); // Example balances
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [depositAmount, setDepositAmount] = useState(""); // New state for deposit amount
   const [convertedAmount, setConvertedAmount] = useState(null);
   const [currency, setCurrency] = useState("USD");
   const [activeTab, setActiveTab] = useState("checking");
@@ -20,6 +21,18 @@ const Wallet = () => {
       setWithdrawAmount("");
     } else {
       alert("Invalid withdraw amount");
+    }
+  };
+
+  const handleDeposit = () => {
+    if (depositAmount > 0) {
+      setBalance({
+        ...balance,
+        [activeTab]: balance[activeTab] + depositAmount,
+      });
+      setDepositAmount("");
+    } else {
+      alert("Invalid deposit amount");
     }
   };
 
@@ -57,6 +70,16 @@ const Wallet = () => {
       />
       <Button onClick={handleWithdraw} variant="outline" className="mb-2">
         Withdraw
+      </Button>
+      <Input
+        type="number"
+        value={depositAmount}
+        onChange={(e) => setDepositAmount(e.target.value)}
+        placeholder="Deposit Amount"
+        className="mb-2"
+      />
+      <Button onClick={handleDeposit} variant="outline" className="mb-2">
+        Deposit
       </Button>
       <Button onClick={handleCurrencyConversion} variant="outline" className="mb-2">
         Convert Currency
