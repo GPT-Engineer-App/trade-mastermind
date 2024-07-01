@@ -9,6 +9,7 @@ import GoldSilverPrices from "@/components/GoldSilverPrices";
 import CurrencyConversion from "@/components/CurrencyConversion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import "react-tabs/style/react-tabs.css";
+import CountdownTimer from "@/components/CountdownTimer";
 import {
   Chart as ChartJS,
   CategoryScale,
