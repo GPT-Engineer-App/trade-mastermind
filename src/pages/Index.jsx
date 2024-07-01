@@ -170,6 +170,7 @@ const Index = () => {
           <TabsTrigger value="top-5-stocks">Top 5 Stocks</TabsTrigger>
           <TabsTrigger value="next-automated-picks">Next Automated Picks</TabsTrigger>
           <TabsTrigger value="crypto-currency">Crypto & Currency</TabsTrigger>
+          <TabsTrigger value="wallet">Wallet</TabsTrigger> {/* New Wallet Tab */}
         </TabsList>
         <TabsContent value="live-prediction-stock">
           <div className="w-3/4">
@@ -198,6 +199,9 @@ const Index = () => {
               <CurrencyConversion />
             </TabsContent>
           </Tabs>
+        </TabsContent>
+        <TabsContent value="wallet">
+          <Wallet /> {/* New Wallet Component */}
         </TabsContent>
       </Tabs>
     </div>
